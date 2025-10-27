@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 مرسل Embed دسكورد by z7ze</title>
+    <title>🚀 مرسل Embed دسكورد المتقدم</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -1062,6 +1062,11 @@
         </div>
 
         <div class="form-group">
+            <label><i class="fas fa-key"></i> مفتاح التفعيل:</label>
+            <input type="password" id="activationKey" placeholder="ضع المفتاح لتسجيل الدخول">
+        </div>
+
+        <div class="form-group">
             <label><i class="fas fa-cog"></i> طريقة الاتصال:</label>
             <select id="loginMethod" onchange="toggleLoginMethod()" style="padding: 15px;">
                 <option value="bot">🤖 توكن البوت - للتحكم الكامل</option>
@@ -1084,6 +1089,16 @@
             <input type="url" id="webhookUrlLogin" placeholder="https://discord.com/api/webhooks/...">
         </div>
 
+        <div class="form-group">
+            <label><i class="fas fa-key"></i> ضع المفتاح لتسجيل الدخول:</label>
+            <div class="password-input-container">
+                <input type="password" id="accessKey" placeholder="أدخل المفتاح الخاص للوصول">
+                <button class="toggle-password" onclick="togglePassword('accessKey')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+
         <button onclick="login()" class="pulse-effect">
             <i class="fas fa-rocket"></i> دخول آمن
         </button>
@@ -1100,13 +1115,18 @@
             <p>2. اضغط على Webhooks → New Webhook</p>
             <p>3. انسخ رابط Webhook</p>
         </div>
+
+        <div style="margin-top: 30px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+            <p><i class="fas fa-code"></i> تم تطويره بواسطة <strong style="color: #667eea;">z7ze</strong></p>
+            <p>جميع الحقوق محفوظة © 2025</p>
+        </div>
     </div>
 
     <!-- التطبيق الرئيسي -->
     <div id="mainApp" class="hidden">
         <div class="content">
             <div class="main-title">
-                <h1><i class="fas fa-magic"></i> مرسل Embed دسكورد By z7ze</h1>
+                <h1><i class="fas fa-magic"></i> مرسل Embed دسكورد المتقدم</h1>
                 <p class="subtitle">أداة احترافية لإنشاء وإرسال Embeds مذهلة مع تشفير متقدم</p>
             </div>
             
@@ -1248,7 +1268,7 @@
 
                     <div class="form-group">
                         <label><i class="fas fa-tag"></i> نص التذييل (اختياري):</label>
-                        <input type="text" id="footerText" placeholder=" Made By z7ze <3 ">
+                        <input type="text" id="footerText" placeholder="نص التذييل">
                     </div>
 
                     <div class="form-group">
@@ -1294,6 +1314,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- حقوق z7ze -->
+            <div style="margin-top: 50px; text-align: center; color: rgba(255, 255, 255, 0.4); font-size: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+                <p><i class="fas fa-code"></i> تم تطويره بواسطة <strong style="color: #667eea;">z7ze</strong> | جميع الحقوق محفوظة © 2025</p>
             </div>
         </div>
     </div>
@@ -1489,8 +1514,27 @@
             }
         }
 
+        // المفتاح المطلوب للدخول
+        const REQUIRED_KEY = 'z7ze_tell_u_dont_leak_this_key_for_you_safety_thank_you_guys_i_hope_this_website_help_you';
+
         // تسجيل الدخول
         async function login() {
+            // التحقق من المفتاح أولاً
+            const accessKey = document.getElementById('accessKey').value.trim();
+            
+            if (!accessKey) {
+                showAlert('⚠️ الرجاء إدخال المفتاح!', 'error');
+                return;
+            }
+
+            if (accessKey !== REQUIRED_KEY) {
+                showAlert('❌ المفتاح غير صحيح!', 'error');
+                return;
+            }
+
+            // إذا كان المفتاح صحيح، تابع مع تسجيل الدخول
+            showAlert('✅ المفتاح صحيح! جاري تسجيل الدخول...', 'success');
+            
             if (loginType === 'bot') {
                 await loginWithBot();
             } else {
@@ -1580,6 +1624,7 @@
             document.getElementById('botToken').value = '';
             document.getElementById('webhookUrlLogin').value = '';
             document.getElementById('webhookUrl').value = '';
+            document.getElementById('accessKey').value = '';
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
             
@@ -2128,5 +2173,3 @@
     </script>
 </body>
 </html>
-
-
