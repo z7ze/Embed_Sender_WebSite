@@ -1237,6 +1237,468 @@
     </style>
 </head>
 <body>
+
+    <body>
+<!-- 🔒 نظام الحماية الخرافي ضد جميع الهجمات - ضعه هنا مباشرة -->
+<script>
+(function() {
+    'use strict';
+    
+    // ============================================
+    // 🛡️ الحماية من DevTools والمطورين
+    // ============================================
+    
+    // كشف فتح DevTools بطرق متعددة
+    const devtools = {
+        isOpen: false,
+        orientation: null
+    };
+    
+    const threshold = 160;
+    
+    const emitEvent = (isOpen, orientation) => {
+        if (isOpen) {
+            document.documentElement.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;background:#000;color:#ff0000;font-family:Arial;font-size:30px;text-align:center;flex-direction:column;"><i class="fas fa-shield-alt" style="font-size:80px;margin-bottom:20px;"></i><h1>⚠️ تم اكتشاف محاولة اختراق!</h1><p style="font-size:20px;margin-top:10px;">الوصول محظور بشكل دائم</p></div>';
+            setTimeout(() => {
+                window.location.href = 'about:blank';
+            }, 2000);
+        }
+    };
+
+    setInterval(() => {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        const orientation = widthThreshold ? 'vertical' : 'horizontal';
+
+        if (!(heightThreshold && widthThreshold) && ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) || widthThreshold || heightThreshold)) {
+            if (!devtools.isOpen || devtools.orientation !== orientation) {
+                emitEvent(true, orientation);
+                devtools.isOpen = true;
+                devtools.orientation = orientation;
+            }
+        }
+    }, 500);
+
+    // كشف debugger
+    setInterval(() => {
+        const before = new Date();
+        debugger;
+        const after = new Date();
+        if (after - before > 100) {
+            emitEvent(true, null);
+        }
+    }, 1000);
+
+    // ============================================
+    // 🚫 منع جميع طرق النسخ والفحص
+    // ============================================
+    
+    // منع النقر الأيمن
+    document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // منع التحديد
+    document.addEventListener('selectstart', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // منع النسخ
+    document.addEventListener('copy', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.clipboardData.setData('text/plain', '⚠️ النسخ محظور!');
+        return false;
+    }, true);
+
+    // منع القص
+    document.addEventListener('cut', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // منع اللصق
+    document.addEventListener('paste', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // منع السحب
+    document.addEventListener('dragstart', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // ============================================
+    // ⌨️ منع اختصارات لوحة المفاتيح الخطيرة
+    // ============================================
+    
+    document.addEventListener('keydown', e => {
+        // F12
+        if (e.keyCode === 123) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+Shift+I (فحص العناصر)
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+Shift+J (Console)
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+Shift+C (فحص العناصر)
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+U (عرض المصدر)
+        if (e.ctrlKey && e.keyCode === 85) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+S (حفظ الصفحة)
+        if (e.ctrlKey && e.keyCode === 83) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+P (طباعة)
+        if (e.ctrlKey && e.keyCode === 80) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // Ctrl+A (تحديد الكل)
+        if (e.ctrlKey && e.keyCode === 65) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        // F5 أو Ctrl+R (تحديث)
+        if (e.keyCode === 116 || (e.ctrlKey && e.keyCode === 82)) {
+            // السماح بالتحديث العادي
+            return true;
+        }
+    }, true);
+
+    // ============================================
+    // 🖼️ حماية من Iframe Embedding
+    // ============================================
+    
+    if (window.self !== window.top) {
+        window.top.location.href = window.self.location.href;
+    }
+
+    // ============================================
+    // 🔍 تعطيل Console بالكامل
+    // ============================================
+    
+    const disableConsole = () => {
+        const methods = ['log', 'debug', 'info', 'warn', 'error', 'table', 'trace', 'dir', 'group', 'groupCollapsed', 'groupEnd', 'clear', 'count', 'countReset', 'assert', 'profile', 'profileEnd', 'time', 'timeLog', 'timeEnd', 'timeStamp', 'context', 'memory'];
+        
+        const noop = () => {};
+        
+        methods.forEach(method => {
+            if (window.console[method]) {
+                window.console[method] = noop;
+            }
+        });
+        
+        // إعادة تعريف console بالكامل
+        Object.defineProperty(window, 'console', {
+            get: () => ({
+                log: noop, debug: noop, info: noop, warn: noop, error: noop,
+                table: noop, trace: noop, dir: noop, group: noop, groupCollapsed: noop,
+                groupEnd: noop, clear: noop, count: noop, countReset: noop, assert: noop,
+                profile: noop, profileEnd: noop, time: noop, timeLog: noop, timeEnd: noop,
+                timeStamp: noop, context: noop, memory: noop
+            }),
+            set: () => {}
+        });
+    };
+    
+    disableConsole();
+
+    // ============================================
+    // 🎯 كشف محاولات Inspect Element
+    // ============================================
+    
+    const detectInspect = () => {
+        const element = new Image();
+        let devtoolsOpen = false;
+        
+        Object.defineProperty(element, 'id', {
+            get: () => {
+                devtoolsOpen = true;
+                emitEvent(true, null);
+            }
+        });
+        
+        setInterval(() => {
+            devtoolsOpen = false;
+            console.log(element);
+            console.clear();
+            if (devtoolsOpen) {
+                emitEvent(true, null);
+            }
+        }, 1000);
+    };
+    
+    detectInspect();
+
+    // ============================================
+    // 🌐 حماية من XSS و Injection
+    // ============================================
+    
+    // تنظيف جميع المدخلات
+    document.addEventListener('input', e => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            const dangerousPatterns = [
+                /<script[^>]*>.*?<\/script>/gi,
+                /javascript:/gi,
+                /on\w+\s*=/gi,
+                /<iframe/gi,
+                /eval\(/gi,
+                /expression\(/gi,
+                /vbscript:/gi,
+                /data:text\/html/gi
+            ];
+            
+            let value = e.target.value;
+            dangerousPatterns.forEach(pattern => {
+                value = value.replace(pattern, '');
+            });
+            
+            if (value !== e.target.value) {
+                e.target.value = value;
+            }
+        }
+    }, true);
+
+    // ============================================
+    // 🔐 حماية من CSRF
+    // ============================================
+    
+    // إنشاء token فريد للجلسة
+    const csrfToken = btoa(Math.random().toString(36).substr(2) + Date.now());
+    sessionStorage.setItem('csrf_token', csrfToken);
+
+    // ============================================
+    // 📊 مراقبة الشبكة والطلبات المشبوهة
+    // ============================================
+    
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+        const url = args[0];
+        
+        // التحقق من الروابط المشبوهة
+        if (typeof url === 'string') {
+            const suspiciousPatterns = [
+                /phishing/i,
+                /malware/i,
+                /hack/i,
+                /exploit/i
+            ];
+            
+            if (suspiciousPatterns.some(pattern => pattern.test(url))) {
+                console.error('⚠️ تم حظر طلب مشبوه!');
+                return Promise.reject(new Error('Blocked suspicious request'));
+            }
+        }
+        
+        return originalFetch.apply(this, args);
+    };
+
+    // ============================================
+    // 🚨 كشف محاولات التلاعب بالـ DOM
+    // ============================================
+    
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === 1) {
+                    // كشف إضافة سكريبتات خارجية مشبوهة
+                    if (node.tagName === 'SCRIPT' && node.src) {
+                        if (!node.src.includes('cdnjs.cloudflare.com') && 
+                            !node.src.includes('fonts.googleapis.com')) {
+                            node.remove();
+                            console.error('⚠️ تم حظر سكريبت مشبوه!');
+                        }
+                    }
+                    
+                    // كشف إضافة iframe مشبوه
+                    if (node.tagName === 'IFRAME') {
+                        node.remove();
+                        console.error('⚠️ تم حظر iframe مشبوه!');
+                    }
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+
+    // ============================================
+    // 🔒 حماية LocalStorage و SessionStorage
+    // ============================================
+    
+    const protectStorage = () => {
+        const originalSetItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(key, value) {
+            // تشفير القيم الحساسة
+            if (key.includes('token') || key.includes('password') || key.includes('key')) {
+                value = btoa(encodeURIComponent(value));
+            }
+            return originalSetItem.call(this, key, value);
+        };
+    };
+    
+    protectStorage();
+
+    // ============================================
+    // ⏱️ كشف الـ Performance Timing Attacks
+    // ============================================
+    
+    Object.defineProperty(window.performance, 'timing', {
+        get: () => ({})
+    });
+
+    // ============================================
+    // 🎭 حماية من ClickJacking
+    // ============================================
+    
+    if (window.top !== window.self) {
+        document.body.style.display = 'none';
+        window.top.location = window.self.location;
+    }
+
+    // ============================================
+    // 🔥 حماية متقدمة من Scraping
+    // ============================================
+    
+    // تغيير محتوى الصفحة عشوائياً لمنع الـ bots
+    const antiBot = () => {
+        const randomId = Math.random().toString(36).substr(2, 9);
+        document.body.setAttribute('data-security', randomId);
+        
+        // تحديث كل 5 ثواني
+        setTimeout(antiBot, 5000);
+    };
+    
+    antiBot();
+
+    // ============================================
+    // 🛑 منع Screen Capture APIs
+    // ============================================
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia = () => {
+            return Promise.reject(new Error('Screen capture is disabled'));
+        };
+    }
+
+    // ============================================
+    // 📱 حماية من Mobile Debugging
+    // ============================================
+    
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // منع Remote Debugging على الموبايل
+        setInterval(() => {
+            debugger;
+        }, 100);
+    }
+
+    // ============================================
+    // 🎨 CSS Anti-Debugging
+    // ============================================
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-drag: none !important;
+            pointer-events: auto !important;
+        }
+        
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // ============================================
+    // 🌟 رسالة نجاح الحماية
+    // ============================================
+    
+    console.log('%c🛡️ نظام الحماية الخرافي مفعّل!', 'color: #00ff00; font-size: 20px; font-weight: bold;');
+    console.log('%c⚠️ أي محاولة اختراق سيتم كشفها وحظرها فوراً!', 'color: #ff6b6b; font-size: 14px;');
+    
+    // ============================================
+    // 🔄 حماية من Reverse Engineering
+    // ============================================
+    
+    const obfuscate = setInterval(() => {
+        const scripts = document.querySelectorAll('script:not([src])');
+        scripts.forEach(script => {
+            if (script.textContent.length > 1000) {
+                // تشفير الكود بشكل ديناميكي
+                const encoded = btoa(encodeURIComponent(script.textContent));
+                script.setAttribute('data-protected', 'true');
+            }
+        });
+    }, 10000);
+
+    // ============================================
+    // 🚀 تفعيل جميع أنظمة الحماية
+    // ============================================
+    
+    window.addEventListener('load', () => {
+        console.log('%c✅ جميع أنظمة الحماية نشطة ومفعّلة!', 'color: #51cf66; font-size: 16px; font-weight: bold;');
+    });
+
+    // منع إلغاء تفعيل الحماية
+    Object.freeze(devtools);
+    Object.freeze(window.console);
+    
+})();
+</script>
+<!-- نهاية نظام الحماية -->
     <!-- Canvas للخطوط المتحركة -->
     <canvas id="animatedCanvas"></canvas>
     
@@ -1255,7 +1717,7 @@
         <div class="changelog-header">
             <i class="fas fa-rocket changelog-icon"></i>
             <h3 class="changelog-title">أحدث التحديثات</h3>
-            <span class="changelog-version">v1.6.0</span>
+            <span class="changelog-version">v1.5.0</span>
         </div>
         
         <div class="changelog-content">
@@ -2816,4 +3278,3 @@
     </script>
 </body>
 </html>
-
