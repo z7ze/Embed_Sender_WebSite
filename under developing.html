@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموقع تحت الصيانة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0015;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #animatedCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px;
+            background: rgba(30, 0, 60, 0.4);
+            border: 2px solid rgba(147, 51, 234, 0.3);
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(147, 51, 234, 0.4),
+                        inset 0 0 30px rgba(147, 51, 234, 0.1);
+            max-width: 600px;
+            animation: floatBox 3s ease-in-out infinite;
+        }
+
+        @keyframes floatBox {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #e9d5ff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(147, 51, 234, 0.8),
+                         0 0 40px rgba(147, 51, 234, 0.5);
+            font-weight: 700;
+        }
+
+        .message {
+            font-size: 24px;
+            color: #d8b4fe;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: rgba(147, 51, 234, 0.2);
+            border: 2px solid rgba(147, 51, 234, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 100px;
+            box-shadow: 0 0 25px rgba(147, 51, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .time-unit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(147, 51, 234, 0.6);
+        }
+
+        .time-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #a855f7;
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .time-label {
+            font-size: 16px;
+            color: #c4b5fd;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .message {
+                font-size: 20px;
+            }
+            
+            .time-unit {
+                min-width: 80px;
+                padding: 15px;
+            }
+            
+            .time-value {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="animatedCanvas"></canvas>
+    
+    <div class="container">
+        <h1>نعتذر</h1>
+        <p class="message">هذا الموقع تحت الصيانة</p>
+        
+        <div class="countdown">
+            <div class="time-unit">
+                <span class="time-value" id="days">0</span>
+                <span class="time-label">يوم</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="hours">0</span>
+                <span class="time-label">ساعة</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="minutes">0</span>
+                <span class="time-label">دقيقة</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-value" id="seconds">0</span>
+                <span class="time-label">ثانية</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // العد التنازلي
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 5); // 5 أيام من الآن
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = endDate - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours;
+                document.getElementById('minutes').textContent = minutes;
+                document.getElementById('seconds').textContent = seconds;
+            } else {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // كود الخطوط المتحركة البنفسجية
+        const canvas = document.getElementById('animatedCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let mouseX = -1000;
+        let mouseY = -1000;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+
+        class Point {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = 2;
+            }
+
+            update() {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 150) {
+                    const force = (150 - distance) / 150;
+                    this.vx -= (dx / distance) * force * 0.5;
+                    this.vy -= (dy / distance) * force * 0.5;
+                }
+
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+
+                if (Math.abs(this.vx) < 0.1) this.vx += (Math.random() - 0.5) * 0.1;
+                if (Math.abs(this.vy) < 0.1) this.vy += (Math.random() - 0.5) * 0.1;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0) { this.x = 0; this.vx *= -1; }
+                if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -1; }
+                if (this.y < 0) { this.y = 0; this.vy *= -1; }
+                if (this.y > canvas.height) { this.y = canvas.height; this.vy *= -1; }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = 'rgba(168, 85, 247, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < 80; i++) {
+            points.push(new Point());
+        }
+
+        function animate() {
+            ctx.fillStyle = '#0a0015';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < points.length; i++) {
+                for (let j = i + 1; j < points.length; j++) {
+                    const dx = points[i].x - points[j].x;
+                    const dy = points[i].y - points[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        const opacity = (1 - distance / 150) * 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        ctx.strokeStyle = `rgba(147, 51, 234, ${opacity})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = 'rgba(147, 51, 234, 0.5)';
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            points.forEach(point => {
+                point.update();
+                point.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        animate();
+    </script>
+</body>
+</html>
